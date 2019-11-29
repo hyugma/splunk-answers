@@ -1,0 +1,8 @@
+index="answers784984" sourcetype="answers784984" earliest=-2mon@mon latest=@mon
+| bin _time span=month
+| stats count by _time event
+| streamstats current=false last(count) as prev by event
+| where _time == relative_time(now(), "-1mon@mon" )
+| eval m2=strftime(relative_time(now(),"-2mon@mon"),"%Y/%m"), m1=strftime(relative_time(now(),"-1mon@mon"),"%Y/%m")
+| eval rate_({m1})/({m2})=round((count/prev)*100)."%", count_{m1} = count, count_{m2} = prev
+| table event, count_*, rate_*
