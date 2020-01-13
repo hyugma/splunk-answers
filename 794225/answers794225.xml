@@ -1,33 +1,30 @@
 <form>
   <label>answers794225</label>
   <fieldset submitButton="true" autoRun="false">
-    <input type="text" token="time1" searchWhenChanged="true">
+    <input type="text" token="time1" searchWhenChanged="false">
       <label>時刻フォーマット (YYYY-MM-DD)</label>
     </input>
   </fieldset>
   <row>
     <panel>
-      <chart>
+      <single>
         <search>
           <query>
-| tstats prestats=true count where index=_internal
+index=_internal
 [ 
   | makeresults 
   | eval earliest=relative_time(strptime("$time1$", "%Y-%m-%d"),"@mon"), latest=relative_time(strptime("$time1$", "%Y-%m-%d"),"+1mon@mon")
-  | return earliest=$$earliest latest=$$latest
-] by _time
-| timechart count
-</query>
+  | fields earliest latest
+] 
+| stats count
+          </query>
         </search>
-        <option name="charting.chart">column</option>
-        <option name="charting.drilldown">none</option>
-        <option name="refresh.display">progressbar</option>
-      </chart>
+      </single>
     </panel>
   </row>
-    <row>
+  <row>
     <panel>
-      <single>
+      <chart>
         <search>
           <query>
 | tstats prestats=true count where index=_internal 
@@ -35,11 +32,14 @@
   | makeresults 
   | eval earliest=relative_time(strptime("$time1$", "%Y-%m-%d"),"@mon"), latest=relative_time(strptime("$time1$", "%Y-%m-%d"),"+1mon@mon")
   | return earliest=$$earliest latest=$$latest
-] 
-| stats count
+] by _time
+| timechart count
           </query>
         </search>
-      </single>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
     </panel>
   </row>
 </form>
