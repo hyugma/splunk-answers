@@ -10,7 +10,7 @@
       <chart>
         <search>
           <query>
-| tstats prestats=true count where index=_internal AND 
+| tstats prestats=true count where index=_internal
 [ 
   | makeresults 
   | eval earliest=relative_time(strptime("$time1$", "%Y-%m-%d"),"@mon"), latest=relative_time(strptime("$time1$", "%Y-%m-%d"),"+1mon@mon")
@@ -30,7 +30,7 @@
       <single>
         <search>
           <query>
-| tstats prestats=true count where index=_internal AND 
+| tstats prestats=true count where index=_internal 
 [ 
   | makeresults 
   | eval earliest=relative_time(strptime("$time1$", "%Y-%m-%d"),"@mon"), latest=relative_time(strptime("$time1$", "%Y-%m-%d"),"+1mon@mon")
