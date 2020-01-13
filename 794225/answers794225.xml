@@ -1,0 +1,45 @@
+<form>
+  <label>answers794225</label>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="text" token="time1" searchWhenChanged="true">
+      <label>時刻フォーマット (YYYY-MM-DD)</label>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <search>
+          <query>
+| tstats prestats=true count where index=_internal AND 
+[ 
+  | makeresults 
+  | eval earliest=relative_time(strptime("$time1$", "%Y-%m-%d"),"@mon"), latest=relative_time(strptime("$time1$", "%Y-%m-%d"),"+1mon@mon")
+  | return earliest=$$earliest latest=$$latest
+] by _time
+| timechart count
+</query>
+        </search>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+    <row>
+    <panel>
+      <single>
+        <search>
+          <query>
+| tstats prestats=true count where index=_internal AND 
+[ 
+  | makeresults 
+  | eval earliest=relative_time(strptime("$time1$", "%Y-%m-%d"),"@mon"), latest=relative_time(strptime("$time1$", "%Y-%m-%d"),"+1mon@mon")
+  | return earliest=$$earliest latest=$$latest
+] 
+| stats count
+          </query>
+        </search>
+      </single>
+    </panel>
+  </row>
+</form>
