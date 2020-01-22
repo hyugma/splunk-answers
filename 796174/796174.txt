@@ -1,0 +1,16 @@
+| makeresults 
+ | eval _raw="id,timestamp,userid,jpy
+ 1,2019-06-10 8:45:05.012349,156,500005
+ 2,2019-08-08 5:30:05.012349,156,10005
+ 3,2019-09-01 7:20:40.012349,156,20005
+ 4,2019-10-10 22:30:05.012349,156,10005
+ 5,2019-12-01 6:30:05.012349,156,10005
+ 6,2019-12-25 13:24:30.012349,156,20005
+ 7,2020-01-19 10:26:01.012349,156,10005
+ 8,2020-01-19 14:01:01.012349,156,250005" 
+ | multikv forceheader=1 
+ | table id,timestamp,userid,jpy 
+ `comment("--- SAMPLE DATA GENERATED ---")`
+| streamstats current=f window=5 list(id) as list_ids_last5 list(jpy) as list_jpy_last5 by userid
+| where mvcount(list_jpy_last5) == 5
+| eval diff_last5=jpy - toNumber(mvindex(list_jpy_last5,0)), diff_last4=jpy-toNumber(mvindex(list_jpy_last5,1)), diff_last3=toNumber(mvindex(list_jpy_last5,2)), diff_last2=jpy-toNumber(mvindex(list_jpy_last5,3)), diff_last1=jpy-toNumber(mvindex(list_jpy_last5,4))
